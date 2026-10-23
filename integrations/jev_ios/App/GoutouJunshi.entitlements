@@ -2,13 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>$(GOUTOU_APP_GROUP)</string>
-	</array>
-	<key>keychain-access-groups</key>
-	<array>
-		<string>$(GOUTOU_KEYCHAIN_GROUP)</string>
-	</array>
+	<!-- 免费个人团队签名：不带 App Group / 共享钥匙串。
+	     付费团队恢复共享能力时，加回以下两段并在 Signing.xcconfig 填 Team：
+	     com.apple.security.application-groups = [$(GOUTOU_APP_GROUP)]
+	     keychain-access-groups = [$(GOUTOU_KEYCHAIN_GROUP)] -->
 </dict>
 </plist>

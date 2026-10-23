@@ -52,10 +52,11 @@ app_resources = phase_paths(targets["GoutouJunshi"], "PBXResourcesBuildPhase")
 assert sum(path.endswith(".csv") for path in app_resources) == 5
 entitlements = [plistlib.loads((ROOT / file).read_bytes()) for file in (
     "App/GoutouJunshi.entitlements", "Keyboard/GoutouKeyboard.entitlements")]
-assert entitlements[0] == entitlements[1] == {
-    "com.apple.security.application-groups": ["$(GOUTOU_APP_GROUP)"],
-    "keychain-access-groups": ["$(GOUTOU_KEYCHAIN_GROUP)"],
-}
+# 免费个人团队签名模式：不带 App Group / 共享钥匙串 entitlement。
+# 付费团队恢复共享能力时，这里应改回断言：
+#   {"com.apple.security.application-groups": ["$(GOUTOU_APP_GROUP)"],
+#    "keychain-access-groups": ["$(GOUTOU_KEYCHAIN_GROUP)"]}
+assert entitlements[0] == entitlements[1] == {}
 for file in ("App/Info.plist", "Keyboard/Info.plist"):
     info = plistlib.loads((ROOT / file).read_bytes())
     assert "NSAppTransportSecurity" not in info
@@ -75,9 +76,8 @@ capture = plistlib.loads((ROOT / "Capture/Info.plist").read_bytes())["NSExtensio
 assert capture["NSExtensionPointIdentifier"] == "com.apple.broadcast-services-upload"
 assert capture["NSExtensionAttributes"]["RPBroadcastProcessMode"] == "RPBroadcastProcessModeSampleBuffer"
 assert capture["NSExtensionPrincipalClass"] == "$(PRODUCT_MODULE_NAME).SampleHandler"
-assert plistlib.loads((ROOT / "Capture/GoutouCapture.entitlements").read_bytes()) == {
-    "com.apple.security.application-groups": ["$(GOUTOU_APP_GROUP)"]
-}
+# 免费个人团队签名模式：Capture 扩展同样不带 App Group（见上方说明）。
+assert plistlib.loads((ROOT / "Capture/GoutouCapture.entitlements").read_bytes()) == {}
 assert "Shared/Networking.swift" not in phase_paths(targets["GoutouCapture"], "PBXSourcesBuildPhase")
 assert {"Keyboard/Resources/pinyin.tsv", "Keyboard/Resources/Pinyin-LICENSE.txt"} <= phase_paths(targets["GoutouKeyboard"], "PBXResourcesBuildPhase")
 scheme = ET.parse(ROOT / "GoutouJunshi.xcodeproj/xcshareddata/xcschemes/GoutouJunshi.xcscheme")

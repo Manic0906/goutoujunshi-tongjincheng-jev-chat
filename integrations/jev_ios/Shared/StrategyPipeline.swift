@@ -1,11 +1,11 @@
 import Foundation
 
 enum StrategyWeights {
-    static let letters = Array("ABCDEFG").map(String.init)
+    static let letters = Array("ABCDEFGH").map(String.init)
     static let rotations = [0, 2, 4]
 
     static func labels(_ offset: Int) -> [String: Strategy] {
-        Dictionary(uniqueKeysWithValues: letters.enumerated().map { ($0.element, Strategy.allCases[($0.offset + offset) % 7]) })
+        Dictionary(uniqueKeysWithValues: letters.enumerated().map { ($0.element, Strategy.allCases[($0.offset + offset) % Strategy.allCases.count]) })
     }
     static func parse(_ completion: Completion, labels: [String: Strategy]) throws -> [String: Double] {
         let selected = completion.content.trimmed
@@ -22,7 +22,7 @@ enum StrategyWeights {
             }
             scores[token] = score
         }
-        guard scores.count == 7, Set(labels.keys) == Set(letters), let peak = scores.values.max() else {
+        guard scores.count == letters.count, Set(labels.keys) == Set(letters), let peak = scores.values.max() else {
             throw GoutouError.invalid("策略 token 数据不完整")
         }
         let total = scores.values.map { exp($0 - peak) }.reduce(0, +)

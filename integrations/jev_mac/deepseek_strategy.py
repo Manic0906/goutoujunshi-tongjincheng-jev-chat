@@ -6,7 +6,7 @@ from client import Config, DEEPSEEK_BASE, DEEPSEEK_MODEL, complete, read_deepsee
 from core import ROOT, STRATEGIES, reference_paths
 from jev import CRITERIA, StrategyDecision
 
-LABELS = 'ABCDEFG'
+LABELS = 'ABCDEFGH'
 ROTATIONS = (0, 2, 4)
 
 

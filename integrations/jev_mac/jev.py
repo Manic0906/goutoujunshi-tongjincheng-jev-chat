@@ -24,6 +24,7 @@ CRITERIA = {
     "约见": "Offer a concrete, low-pressure meeting when there is reciprocal interest and a credible time/activity opening.",
     "澄清": "Ask about one key unknown or contradiction that prevents a responsible next step. Do not interrogate or speculate about hidden intentions.",
     "收线": "Stop pursuing after an explicit refusal or boundary, or repeated one-sided investment/cancellations. A single busy reply alone does not establish this pattern.",
+    "破冰": "Break the ice proactively when first meeting, when the conversation stalls, or the mood is stiff and the other person has not yet engaged with humor (mutually exclusive with 调侃, which applies once banter is already flowing). Use observational, light humor; self-deprecation before teasing; at most one joke per line; no interrogation-style question chains; advance half a step at a time without showing eagerness.",
 }
 
 

@@ -110,8 +110,8 @@ class DeepSeekStrategyTests(unittest.TestCase):
         self.assertEqual(result.method, 'deepseek_self_report')
         self.assertEqual(result.probabilities, {})
 
-    def test_choice_parser_requires_first_token_and_all_seven_labels(self):
-        labels = dict(zip(LABELS, ('承接', '降压', '调侃', '轻推', '约见', '澄清', '收线')))
+    def test_choice_parser_requires_first_token_and_all_eight_labels(self):
+        labels = dict(zip(LABELS, ('承接', '降压', '调侃', '轻推', '约见', '澄清', '收线', '破冰')))
         top = [{'token':label, 'logprob':-i} for i, label in enumerate(LABELS)]
         with self.assertRaisesRegex(ValueError, '权重不可用'):
             parse_choice('A', {'content':[{'token':' ', 'top_logprobs':top}]}, labels)

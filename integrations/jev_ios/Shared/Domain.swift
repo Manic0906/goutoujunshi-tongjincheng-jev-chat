@@ -22,7 +22,7 @@ enum GoutouError: LocalizedError {
 
 enum Strategy: String, Codable, CaseIterable {
     case acknowledge = "承接", ease = "降压", tease = "调侃", nudge = "轻推"
-    case meet = "约见", clarify = "澄清", stop = "收线"
+    case meet = "约见", clarify = "澄清", stop = "收线", icebreak = "破冰"
 
     var guide: String {
         switch self {
@@ -33,6 +33,7 @@ enum Strategy: String, Codable, CaseIterable {
         case .meet: return "有互惠与可信时间窗口时，提出具体、可拒绝的见面。"
         case .clarify: return "只澄清影响决策的一个关键未知，不审问、不读心。"
         case .stop: return "明确拒绝、要求停止联系或持续单边投入时停止推进。"
+        case .icebreak: return "初识、冷场或氛围僵硬且对方尚未接梗时主动破冰（与“调侃”互斥：对方已接梗互有来往时用调侃）。以“深情祖师爷”的思维框架剖析人际关系：洞察吸引力与人性，懂得给人台阶、不轻易考验人性，识破炫耀背后的不安全感，理解成功前后的世界差异，从而看透关系、掌握分寸、清醒处世。"
         }
     }
 }

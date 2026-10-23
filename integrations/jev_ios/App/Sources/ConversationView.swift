@@ -216,7 +216,7 @@ struct DetailView: View {
                     if let decision = advice.decision {
                         block("策略判断来源", decision.summary)
                         if !decision.probabilities.isEmpty {
-                            rows("七策略相对权重", Strategy.allCases.map {
+                            rows("策略相对权重", Strategy.allCases.map {
                                 "\($0.rawValue)：\(Decision.percent(decision.probabilities[$0.rawValue]))"
                             })
                         }

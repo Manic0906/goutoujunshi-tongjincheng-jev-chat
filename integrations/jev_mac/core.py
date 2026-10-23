@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-STRATEGIES = ("承接", "降压", "调侃", "轻推", "约见", "澄清", "收线")
+STRATEGIES = ("承接", "降压", "调侃", "轻推", "约见", "澄清", "收线", "破冰")
 MAX_TRANSCRIPT = 12000
 INTENT_CONFIDENCE_NOTE = '这是回复模型对当前意图推测的自评把握，未经过统计校准；不是对方真实意图的已验证概率，也不是回复成功率。'
 
@@ -119,7 +119,7 @@ OCR 左右判定只是线索；说话人可能经过人工核对，也可能来�
 intent（一个主要的可能意图，80字以内，使用“可能”等不确定措辞；其他解释放 hypotheses；证据不足则明确无法判断，不能宣称读心）、
 intent_confidence（对 intent 这条主要推测的自评把握，0 到 1 的数字，例如 0.62，不是统计校准概率；
 没有足够证据区分意图、没有可见事实、归属不明或 intent 表示无法判断时必须为 null，不得凑数；不能照抄 Jev 的策略置信度或候选权重）、
-unknowns（关键未知数组）、strategy（承接/降压/调侃/轻推/约见/澄清/收线之一）、
+unknowns（关键未知数组）、strategy（承接/降压/调侃/轻推/约见/澄清/收线/破冰之一）、
 recommendation（明确的首选行动）、next_step（下一步或观察窗口）、stop_condition（何时停止或改变策略）、
 candidates（0 至 3 个对象，按推荐顺序，每个含 text、reason、tradeoff；text 仅为可发送原文，最多100字）、
 question（一个必要追问，无则空字符串）。其余文字字段每项最多300字，数组各最多5项。

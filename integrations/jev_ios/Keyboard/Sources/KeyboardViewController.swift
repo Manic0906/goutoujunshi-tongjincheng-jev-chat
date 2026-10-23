@@ -317,6 +317,18 @@ final class KeyboardViewController: UIInputViewController {
         if store != nil { content.addArrangedSubview(contextButton()) }
         switch mode {
         case .idle:
+            if !GoutouStore.sharedContainerAvailable {
+                let keysEmpty = (try? CredentialVault.load()).map { $0.deepseek.trimmed.isEmpty && $0.openrouter.trimmed.isEmpty && $0.jev.trimmed.isEmpty } ?? true
+                if keysEmpty {
+                    content.addArrangedSubview(KB.card([
+                        KB.label("首次使用：导入配置", size: 15, bold: true),
+                        KB.label("当前签名没有共享容器（免费证书），需从 App 导入一次配置与密钥：打开狗头军师 App → 设置 → 「复制配置给键盘」，然后回到这里点下方按钮。改 Key 或对象后需重新导入。", size: 13)
+                    ]))
+                    content.addArrangedSubview(KB.button("从剪贴板导入配置", icon: "square.and.arrow.down.on.square", primary: true) { [weak self] in self?.importConfig() })
+                } else {
+                    content.addArrangedSubview(KB.label("剪贴板同步模式：配置与密钥由 App 导出、在此导入。改 Key 后请重新导入。", size: 13))
+                }
+            }
             content.addArrangedSubview(KB.label("从聊天截图或已复制的消息读取，再核对并分析。", size: 14))
             content.addArrangedSubview(KB.row([
                 KB.button("截图识别", icon: "photo", primary: true) { [weak self] in self?.openScreenshot() },
@@ -341,11 +353,33 @@ final class KeyboardViewController: UIInputViewController {
         case .gate: break
         }
     }
+    private func importConfig() {
+        guard hasFullAccess else { mode = .gate; render(); return }
+        guard let raw = UIPasteboard.general.string, !raw.trimmed.isEmpty else {
+            notice = "剪贴板是空的；请先在 App 里点「复制配置给键盘」。"; footer.text = notice; return
+        }
+        do {
+            let payload = try ConfigTransfer.import(raw.trimmingCharacters(in: .whitespacesAndNewlines))
+            guard let store = store else { return }
+            try store.saveConfig(payload.config)
+            try store.saveRelationship(payload.relationship, archive: false)
+            let pairs = [("deepseek", payload.deepseek), ("openrouter", payload.openrouter), ("jev", payload.jev)]
+            for (name, value) in pairs where !value.isEmpty { try CredentialVault.write(value, name: name) }
+            config = payload.config; relationship = payload.relationship
+            notice = "配置导入成功 · 密钥只保存在本机。可以读取剪贴板消息开始分析了。"
+        } catch { notice = error.localizedDescription }
+        render()
+    }
+
     private func openScreenshot() {
         guard mode != .loading else { return }
         guard hasFullAccess, store != nil else {
             showTyping = false; mode = .gate
             notice = "键盘接收截图文字需要完全访问；本地打字仍可使用。"; render(); return
+        }
+        if !GoutouStore.sharedContainerAvailable {
+            notice = "免费证书模式不支持识图（无共享容器）。替代做法：系统截图后长按文字全选复制，回来点「读取剪贴板」。"
+            footer.text = notice; return
         }
         invalidate(clearTranscript: true)
         waitingCapture = nil; receivedCaptureID = nil

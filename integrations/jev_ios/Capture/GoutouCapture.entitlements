@@ -2,9 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>$(GOUTOU_APP_GROUP)</string>
-	</array>
+	<!-- 免费个人团队签名：不带 App Group。
+	     付费团队恢复共享能力时，加回：
+	     com.apple.security.application-groups = [$(GOUTOU_APP_GROUP)] -->
 </dict>
 </plist>

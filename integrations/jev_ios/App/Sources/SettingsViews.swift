@@ -54,6 +54,11 @@ struct ProviderView: View {
             Section {
                 Button("保存并应用配置") { save() }.buttonStyle(BrandPrimaryButtonStyle())
                     .disabled(testing || model.store == nil).accessibilityIdentifier("saveConfigButton")
+                if !GoutouStore.sharedContainerAvailable {
+                    Button("复制配置给键盘") { model.exportConfigToClipboard() }
+                    Text("当前为免费证书签名（无共享容器）：保存配置后点「复制配置给键盘」，再到聊天里唤起键盘点「从剪贴板导入配置」。改 Key、口吻或对象后需重新复制一次。")
+                        .font(.caption).foregroundStyle(Palette.secondary)
+                }
                 if testing { HStack { ProgressView(); Button("取消测试") { cancelTest(); message = "已取消" } } }
                 Text(message).font(.footnote).foregroundStyle(Palette.secondary).textSelection(.enabled)
             } footer: {

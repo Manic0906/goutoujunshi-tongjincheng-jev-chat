@@ -69,7 +69,7 @@ struct CoreChecks {
 
     static func contracts() throws {
         try check("Default uses DeepSeek independently", AppConfig().judge == .deepseek && AppConfig().reply == .deepseek)
-        try check("Seven project strategies", Strategy.allCases.count == 7)
+        try check("Eight project strategies", Strategy.allCases.count == 8)
         try check("Natural voice guide bundled", GoutouGuidance.common.contains("先像本人") && GoutouGuidance.common.contains("别演自然"))
         try check("Repair guide bundled", GoutouGuidance.scene["修复冲突"] != nil)
         try check("Goal mapping retained", Relationship.goals.count == 6 && Relationship.stages.count == 7)
@@ -122,7 +122,7 @@ struct CoreChecks {
         try check("Stable rotation distribution accepted", StrategyWeights.merge(rounds, evidence: decision).method == "deepseek_logprobs")
         var unstable = rounds; unstable[1] = ["约见": 1]
         try check("Unstable rotation retains evidence fallback", StrategyWeights.merge(unstable, evidence: decision).probabilities.isEmpty)
-        let tied = Dictionary(uniqueKeysWithValues: Strategy.allCases.map { ($0.rawValue, 1.0 / 7) })
+        let tied = Dictionary(uniqueKeysWithValues: Strategy.allCases.map { ($0.rawValue, 1.0 / 8) })
         try check("Tied labels never imply a stable winner", StrategyWeights.merge([tied, tied, tied], evidence: decision).probabilities.isEmpty)
         let ranked = try CandidateRanking.apply(advice.candidates, raw: scores)
         try check("Ranking normalizes to 100", ranked.compactMap(\.weight).reduce(0, +) == 100)
@@ -391,7 +391,7 @@ struct CoreChecks {
         } catch is GoutouError {}
         try check("Unconfirmed text never reaches provider", invalidReview.calls.isEmpty)
         var jevConfig = AppConfig(); jevConfig.judge = .jev
-        let probabilities = Dictionary(uniqueKeysWithValues: Strategy.allCases.map { ($0.rawValue, $0 == .ease ? 0.7 : 0.05) })
+        let probabilities = Dictionary(uniqueKeysWithValues: Strategy.allCases.map { ($0.rawValue, $0 == .ease ? 0.79 : 0.03) })
         let jevRaw: [String: Any] = ["answers": ["reply_strategy": ["type": "choice", "choice": "降压", "confidence": 0.7, "probabilities": probabilities]]]
         let jevMock = MockTransport([jevRaw, completion(response), completion(scores)])
         let jevResult = try await GoutouPipeline(api: ModelAPI(transport: jevMock, config: jevConfig, secrets: secrets)).analyze(transcript, relationship: Relationship())

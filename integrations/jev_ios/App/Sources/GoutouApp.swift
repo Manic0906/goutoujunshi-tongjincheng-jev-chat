@@ -86,7 +86,9 @@ final class AppModel: ObservableObject {
             confirmed = false; invalidate(clear: true, clearKeyboardSession: false)
         }
         config = updated; relationship = context
-        keyboardStatus = store.keyboardStatus
+        keyboardStatus = GoutouStore.sharedContainerAvailable
+            ? store.keyboardStatus
+            : "剪贴板同步模式 · 改配置或 Key 后请点「复制配置给键盘」"
     }
     func invalidate(clear: Bool, clearKeyboardSession: Bool = true) {
         revision += 1; task?.cancel(); task = nil; working = false
@@ -142,10 +144,30 @@ final class AppModel: ObservableObject {
     }
     func sendToKeyboard() {
         guard let store = store, let advice = advice, confirmed, !demo, !working else { return }
+        guard GoutouStore.sharedContainerAvailable else {
+            status = "免费证书模式没有共享容器，无法直接交给键盘；请在目标聊天里唤起狗头军师键盘直接分析。"
+            return
+        }
         do {
             try store.handoff(KeyboardHandoff(transcript: transcript, advice: advice, relationship: relationship,
                                              config: config, createdAt: Date()))
             status = "已交给键盘 · 5 分钟内切回目标聊天，选择狗头军师键盘。取用后会删除临时内容。"
+        } catch { status = error.localizedDescription }
+    }
+
+    /// 免费证书（无 App Group）时把配置、当前对象与三把 Key 打包进剪贴板，
+    /// 由键盘端「从剪贴板导入配置」接收。
+    func exportConfigToClipboard() {
+        do {
+            guard let store = store else { return }
+            let secrets = try CredentialVault.load()
+            guard !(secrets.deepseek.trimmed.isEmpty && secrets.openrouter.trimmed.isEmpty && secrets.jev.trimmed.isEmpty) else {
+                status = "还没有已保存的 Key；请先在下方填写并保存，再复制给键盘。"; return
+            }
+            let payload = ConfigTransfer.Payload(config: config, relationship: relationship,
+                                                  deepseek: secrets.deepseek, openrouter: secrets.openrouter, jev: secrets.jev)
+            UIPasteboard.general.string = try ConfigTransfer.export(payload)
+            status = "已复制 · 回到聊天切出狗头军师键盘，点「从剪贴板导入配置」。"
         } catch { status = error.localizedDescription }
     }
     func recognize(_ data: Data, provider: OCRProvider) {
